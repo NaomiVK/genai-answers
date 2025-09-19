@@ -110,7 +110,7 @@ QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAss
 - `UniqueFacts`: See Key Metrics above
 
 ### 4. `cross_model_flags.csv` & `cross_model_flags.xlsx`
-Cross-model comparison data with improved structure:
+Cross-model comparison data:
 ```csv
 QID | Type | Model | MissingFromModels | Details
 ```
