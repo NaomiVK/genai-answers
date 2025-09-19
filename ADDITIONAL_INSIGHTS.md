@@ -88,17 +88,7 @@ else:
 ## Usage Recommendations
 
 ### For Immediate Implementation
-Add these columns to `per_question_details.csv`:
-- `ConfidenceBand`: High/Medium/Low based on consistency + correctness
-- `QuestionDifficulty`: Easy/Medium/Hard based on average performance
-- `TopicCategory`: Manual or auto-categorized topic area
-
-### For Analysis Scripts
-Create separate analysis scripts that:
-1. Generate model performance reports
-2. Identify high-risk question categories
-3. Create ensemble answers for low-consistency questions
-
+Add these
 ### For Production Use
 1. **Flag for Review**: Questions with consistency < 0.5
 2. **Auto-Approve**: Questions with consistency > 0.8 and correctness > 0.8

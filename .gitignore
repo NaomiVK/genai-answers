@@ -4,6 +4,9 @@
 # Agent configuration
 AGENTS.md
 
+# Additional documentation
+ADDITIONAL_INSIGHTS.md
+
 # Python
 __pycache__/
 *.py[cod]
