@@ -1,0 +1,46 @@
+QID,Type,Model,MissingFromModels,Details
+74aa4655e8,Unique Facts,ChatGPT4o,AI answers response,CRA phone number 1-800-959-8281 for individual tax enquiries | First-time users may need to provide additional information to verify identity
+74aa4655e8,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,"Service was previously known as SecureKey Concierge | May need to provide SIN, date of birth, and tax return information for first-time registration"
+74aa4655e8,Unique Facts,Gemini Flash 2.o,AI answers response,Financial institution asks for consent to share identity information with CRA | Look for padlock icon in browser address bar for security
+74aa4655e8,Unique Facts,AI answers response,ChatGPT4o; Claude Sonnet 3.7; Gemini Flash 2.o,Use the same sign-in method every time you access your CRA account
+3feaf9d084,Unique Facts,ChatGPT4o,AI answers; Claude Sonnet 3.7; Gemini Flash 2.o,"Specific phone numbers: 1-800-959-8281 for individuals, 1-800-959-5525 for businesses | Business Number format includes program identifiers like RT0001 for GST/HST"
+3feaf9d084,Unique Facts,Claude Sonnet 3.7,AI answers; ChatGPT4o; Gemini Flash 2.o,"SIN appears partially masked in top right section (e.g., XXX XXX 123) | Specific URL: canada.ca/my-cra-account"
+3feaf9d084,Unique Facts,AI answers,ChatGPT4o; Claude Sonnet 3.7; Gemini Flash 2.o,Business Number is 15 characters (not just 9 digits)
+3feaf9d084,Contradiction,"AI answers, ChatGPT4o, Claude Sonnet 3.7",N/A,What constitutes the CRA account number
+3feaf9d084,Contradiction,"AI answers, ChatGPT4o, Claude Sonnet 3.7",N/A,Business Number format
+8251d93c27,Unique Facts,ChatGPT4o,AI answers response; Claude Sonnet 3.7; Gemini Flash 2.o,multi-factor authentication is required and involves entering a security code
+8251d93c27,Unique Facts,ChatGPT4o,AI answers response; Gemini Flash 2.o,CRA contact number 1-800-959-8281 for individuals
+8251d93c27,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,CRA e-Services Helpdesk contact number 1-800-959-8281
+8251d93c27,Unique Facts,Claude Sonnet 3.7,AI answers response; Gemini Flash 2.o,specific options for recovering forgotten user ID or password
+fe5a045281,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,Security code mailed by CRA takes 5-10 business days | SecureKey Concierge mentioned as the Sign-in Partner service name
+fe5a045281,Unique Facts,ChatGPT4o,AI answers response; Claude Sonnet 3.7; Gemini Flash 2.o,"CRA contact hours: Monday to Friday 8am-8pm local time, Saturday 9am-5pm local time"
+fe5a045281,Unique Facts,Gemini Flash 2.o,AI answers response; ChatGPT4o; Claude Sonnet 3.7,Suggestion to clear browser cache and cookies if experiencing issues
+6466bb9c89,Unique Facts,ChatGPT4o,AI answers response; Claude Sonnet 3.7; Gemini Flash 2.o,Form AUT-01 as an authorization option
+6466bb9c89,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,Level 1 authorization for viewing only | Level 2 authorization for making changes | CRA e-Services Helpdesk number 1-800-959-5525
+6466bb9c89,Unique Facts,Claude Sonnet 3.7,AI answers response; Gemini Flash 2.o,Form T1013 for individuals | Form RC59 for businesses
+6466bb9c89,Unique Facts,Gemini Flash 2.o,AI answers response; ChatGPT4o; Claude Sonnet 3.7,Need to enter client's information like SIN or business number after logging in
+bc1cc11022,Unique Facts,AI answers response,ChatGPT4o; Claude Sonnet 3.7; Gemini Flash 2.o,Must contact CRA to revoke Sign-In Partner credential
+bc1cc11022,Unique Facts,ChatGPT4o,AI answers response; Claude Sonnet 3.7; Gemini Flash 2.o,Security code arrives within 10 business days | ZIP code option for non-Canadian residents
+bc1cc11022,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,Personal access code (PAC) as optional requirement
+bc1cc11022,Unique Facts,Gemini Flash 2.o,AI answers response; ChatGPT4o; Claude Sonnet 3.7,Email verification required | Can switch from within My Account
+bc1cc11022,Contradiction,"AI answers response, ChatGPT4o, Claude Sonnet 3.7",N/A,Process for switching from Sign-In Partner to CRA login
+d0e45d52af,Unique Facts,ChatGPT4o,AI answers response; Claude Sonnet 3.7; Gemini Flash 2.o,Form AUT-01 can be used to authorize representatives | Provincial partner (BC Services Card) as a sign-in option
+d0e45d52af,Unique Facts,ChatGPT4o,AI answers response; Gemini Flash 2.o,Represent a Client portal for accountants/representatives
+d0e45d52af,Unique Facts,Claude Sonnet 3.7,AI answers response; Gemini Flash 2.o,Security code mailed to business address must be entered within 45 days
+d0e45d52af,Unique Facts,ChatGPT4o,AI answers response; Gemini Flash 2.o,Business Number (BN) requirement for registration
+d0e45d52af,Contradiction,"AI answers response, ChatGPT4o, Claude Sonnet 3.7",N/A,Whether My Business Account is separate from personal My Account or uses same credentials
+3899a33225,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,The 'Switch to CRA' feature exists to navigate between Service Canada and CRA accounts
+3899a33225,Unique Facts,ChatGPT4o,AI answers response; Gemini Flash 2.o,Provincial partner sign-in option | Security code mailed to home address for initial registration | CRA contact number 1-800-959-8281 for individuals
+3899a33225,Unique Facts,Claude Sonnet 3.7,ChatGPT4o; Gemini Flash 2.o,GCKey as a sign-in method | CRA e-Services Helpdesk number 1-800-959-8281
+3899a33225,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,SecureKey Concierge as the Sign-in Partner service name
+3899a33225,Contradiction,"AI answers response, ChatGPT4o, Claude Sonnet 3.7",N/A,Ability to access CRA account from Service Canada account
+abed85b806,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,GCKey as a third sign-in option | SecureKey Concierge as the specific name for Sign-in Partner
+abed85b806,Unique Facts,ChatGPT4o,AI answers response; Gemini Flash 2.o,Suggestion to clear browser cache as troubleshooting step
+abed85b806,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,Business account phone number 1-800-959-5525
+abed85b806,Unique Facts,AI answers response,ChatGPT4o; Claude Sonnet 3.7; Gemini Flash 2.o,Mention of My Business Account and Represent a Client as additional CRA services
+abed85b806,Contradiction,"AI answers response, ChatGPT4o, Claude Sonnet 3.7",N/A,Number of sign-in methods available
+df9c9d8e27,Unique Facts,AI answers response,ChatGPT4o; Claude Sonnet 3.7; Gemini Flash 2.o,Provincial partner options available (BC Services Card or Alberta.ca Account) | May need to call CRA to revoke old Sign-In Partner before registering new method
+df9c9d8e27,Unique Facts,ChatGPT4o,AI answers response; Claude Sonnet 3.7; Gemini Flash 2.o,Security code received by mail after CRA registration | System Outages page available for checking service status
+df9c9d8e27,Unique Facts,Claude Sonnet 3.7,AI answers response; ChatGPT4o; Gemini Flash 2.o,Technical support phone number 1-800-714-7257 | Line 23600 from previous return needed for registration | My Service Canada Account as specific sign-in partner option
+df9c9d8e27,Unique Facts,Gemini Flash 2.o,AI answers response; ChatGPT4o; Claude Sonnet 3.7,Option to file by mail with paper return | Paper returns have significantly longer processing times
+df9c9d8e27,Contradiction,"AI answers response, ChatGPT4o, Claude Sonnet 3.7",N/A,Information needed for CRA registration
