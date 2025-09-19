@@ -295,52 +295,6 @@ async def verify_fact(claim):
 - Error trend analysis
 - Export capabilities for stakeholder reports
 
-## Recent Improvements
-
-### Consistency Metrics (Latest)
-- Added ConsistencyScore (0-1) to measure response agreement across models
-- AgreementLevel (High/Medium/Low) for quick assessment
-- Contradiction and UniqueFacts counts in per_question_details.csv
-- Helps identify questions where models disagree significantly
-
-### Model Name Mapping
-- Automatic correction when Claude Opus doesn't return proper model names
-- Maps evaluations to actual model columns even when parsing issues occur
-- Ensures consistent model identification across all output files
-
-### Enhanced Cross-Model Analysis
-- Cleaner CSV structure with clear Type column (Unique Facts vs. Contradictions)
-- Details column contains only facts/topics, not model names
-- Model involvement clearly shown in dedicated columns
-- Cross-model flags now output to both CSV and Excel formats
-
-### CRA Context Enhancement
-- Explicit CRA context added to every evaluation prompt
-- Judge preamble emphasizes Canadian federal tax administration
-- Reduces ambiguity in question interpretation
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Model names showing as "model"**:
-   - Now auto-corrected by matching evaluation order to model columns
-   - Original issue: Occurs when Claude Opus doesn't extract model names from prompt
-
-2. **Empty cross_model_flags**:
-   - Normal when models agree on all points
-   - Increase sample size for more contradictions
-   - Check for subtle differences in phrasing that may not be flagged
-
-3. **API Timeouts**:
-   - Default timeout: 2 minutes per evaluation
-   - Can increase with `--timeout` parameter
-   - Consider using `--max-rows` for testing
-
-4. **CSV formatting issues**:
-   - Details field properly quoted when containing commas
-   - Valid CSV format readable by pandas, Excel, and Google Sheets
-   - Some basic CSV readers may struggle with embedded commas
 
 ### Debug Mode
 Enable detailed logging:
@@ -350,20 +304,3 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 ```
 
-## Compliance & Ethics
-
-- **Privacy**: Never include personal taxpayer information in evaluations
-- **Accuracy**: Evaluations are assistive, not authoritative tax advice
-- **Transparency**: Document evaluation criteria and limitations
-- **Updates**: Regularly update fact bases for tax law changes
-
-## Contact & Support
-
-For questions or improvements to the evaluation system:
-- Review official CRA documentation at canada.ca
-- Consult latest tax legislation and bulletins
-- Consider seasonal tax changes and updates
-
----
-
-*Note: This evaluation system is designed for quality assurance of AI responses about CRA information. It does not replace professional tax advice or official CRA guidance.*

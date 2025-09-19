@@ -7,7 +7,6 @@ A Python-based evaluation system that assesses the quality and accuracy of multi
 - **Multi-Model Evaluation**: Compare responses from multiple AI models simultaneously
 - **Expert Judge**: Uses Claude Opus 4.1 via OpenRouter to evaluate factual correctness
 - **Cross-Model Analysis**: Identifies contradictions and unique facts across models
-- **Multiple Output Formats**: JSON, CSV, and Excel files for comprehensive analysis
 - **Detailed Metrics**: Correctness scores, critical errors, and missing information tracking
 
 ## Quick Start

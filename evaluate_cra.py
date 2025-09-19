@@ -1,12 +1,11 @@
 import os, json, argparse, hashlib
 import pandas as pd
-import numpy as np
 from tqdm import tqdm
 from openai import OpenAI
 
 # ---------- Config ----------
-DEFAULT_MODEL = "anthropic/claude-opus-4.1"  # OpenRouter model: Claude Opus 4.1
-REQUIRED_FIELDS = ["Question"]  # will auto-detect model columns if not provided
+DEFAULT_MODEL = "anthropic/claude-opus-4.1"  
+REQUIRED_FIELDS = ["Question"]  
 
 # Strict JSON schema for responses_api -> response_format.json_schema
 EVAL_SCHEMA = {
@@ -359,6 +358,8 @@ def main():
     all_rows = []
     all_diffs = []
     all_details = []
+    # Track consistency metrics per question
+    question_consistency = {}
 
     with open(jsonl_path, "w", encoding="utf-8") as w:
         for sheet in sheets:
@@ -387,33 +388,36 @@ def main():
                 w.write(json.dumps(parsed, ensure_ascii=False) + "\n")
 
                 # Calculate consistency metrics for this question
-                correctness_scores = [pm["correctness_score"] for pm in parsed["per_model"]]
+                model_scores = [pm["correctness_score"] for pm in parsed["per_model"]]
 
-                # Calculate consistency score (0-1, where 1 is perfect consistency)
-                if len(correctness_scores) > 1:
-                    # Use coefficient of variation (CV) inverted and bounded
-                    mean_score = np.mean(correctness_scores)
-                    std_score = np.std(correctness_scores)
+                # Calculate consistency score (standard deviation of scores)
+                import statistics
+                if len(model_scores) > 1:
+                    consistency_score = 1 - min(statistics.stdev(model_scores), 1.0)  # Normalize to 0-1
 
-                    if mean_score > 0:
-                        cv = std_score / mean_score  # Coefficient of variation
-                        consistency_score = max(0, 1 - cv)  # Invert so 1 is consistent
+                    # Determine agreement level based on score variance
+                    score_range = max(model_scores) - min(model_scores)
+                    if score_range <= 0.1:
+                        agreement_level = "High"
+                    elif score_range <= 0.3:
+                        agreement_level = "Medium"
                     else:
-                        consistency_score = 1.0 if std_score == 0 else 0.0
+                        agreement_level = "Low"
                 else:
-                    consistency_score = 1.0  # Single model is perfectly consistent with itself
+                    consistency_score = 1.0
+                    agreement_level = "N/A"
 
                 # Count contradictions and unique facts for this question
-                num_contradictions = len(parsed["cross_model"].get("contradictions", []))
-                num_unique_facts = len(parsed["cross_model"].get("facts_unique_to_model", []))
+                num_contradictions = len(parsed["cross_model"]["contradictions"])
+                num_unique_facts = sum(len(uf.get("facts", [])) for uf in parsed["cross_model"]["facts_unique_to_model"])
 
-                # Calculate agreement level
-                if std_score < 0.1:
-                    agreement_level = "High"
-                elif std_score < 0.25:
-                    agreement_level = "Medium"
-                else:
-                    agreement_level = "Low"
+                # Store consistency metrics for this question
+                question_consistency[parsed["question_id"]] = {
+                    "ConsistencyScore": round(consistency_score, 3),
+                    "AgreementLevel": agreement_level,
+                    "Contradictions": num_contradictions,
+                    "UniqueFacts": num_unique_facts
+                }
 
                 # per-model summary rows
                 for pm in parsed["per_model"]:
@@ -428,8 +432,10 @@ def main():
                     })
 
                     # Detailed per-question data with consistency metrics
+                    qid = parsed["question_id"]
+                    metrics = question_consistency.get(qid, {})
                     all_details.append({
-                        "QID": parsed["question_id"],
+                        "QID": qid,
                         "Question": parsed["question"][:100] + "..." if len(parsed["question"]) > 100 else parsed["question"],
                         "Model": pm["name"],
                         "Verdict": pm["verdict"],
@@ -439,10 +445,10 @@ def main():
                         "KeyPointsCovered": "; ".join(pm["key_points_covered"]) if pm["key_points_covered"] else "",
                         "KeyPointsMissing": "; ".join(pm["key_points_missing"]) if pm["key_points_missing"] else "",
                         "Notes": pm["notes"],
-                        "ConsistencyScore": round(consistency_score, 2),
-                        "AgreementLevel": agreement_level,
-                        "Contradictions": num_contradictions,
-                        "UniqueFacts": num_unique_facts
+                        "ConsistencyScore": metrics.get("ConsistencyScore", "N/A"),
+                        "AgreementLevel": metrics.get("AgreementLevel", "N/A"),
+                        "Contradictions": metrics.get("Contradictions", 0),
+                        "UniqueFacts": metrics.get("UniqueFacts", 0)
                     })
 
                 # cross-model flags
@@ -495,12 +501,17 @@ def main():
     diff_xlsx = os.path.join(args.outdir, "cross_model_flags.xlsx")
     pd.DataFrame(all_diffs).to_excel(diff_xlsx, index=False, sheet_name="Cross Model Flags")
 
+    # Write per_question_details to Excel as well
+    detail_xlsx = os.path.join(args.outdir, "per_question_details.xlsx")
+    pd.DataFrame(all_details).to_excel(detail_xlsx, index=False, sheet_name="Per Question Details")
+
     print("Wrote:")
     print(" -", jsonl_path)
     print(" -", sum_csv)
     print(" -", diff_csv)
     print(" -", diff_xlsx)
     print(" -", detail_csv)
+    print(" -", detail_xlsx)
 
 if __name__ == "__main__":
     main()
