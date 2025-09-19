@@ -1,5 +1,6 @@
 import os, json, argparse, hashlib
 import pandas as pd
+import numpy as np
 from tqdm import tqdm
 from openai import OpenAI
 
@@ -385,6 +386,35 @@ def main():
                 # write JSONL artifact
                 w.write(json.dumps(parsed, ensure_ascii=False) + "\n")
 
+                # Calculate consistency metrics for this question
+                correctness_scores = [pm["correctness_score"] for pm in parsed["per_model"]]
+
+                # Calculate consistency score (0-1, where 1 is perfect consistency)
+                if len(correctness_scores) > 1:
+                    # Use coefficient of variation (CV) inverted and bounded
+                    mean_score = np.mean(correctness_scores)
+                    std_score = np.std(correctness_scores)
+
+                    if mean_score > 0:
+                        cv = std_score / mean_score  # Coefficient of variation
+                        consistency_score = max(0, 1 - cv)  # Invert so 1 is consistent
+                    else:
+                        consistency_score = 1.0 if std_score == 0 else 0.0
+                else:
+                    consistency_score = 1.0  # Single model is perfectly consistent with itself
+
+                # Count contradictions and unique facts for this question
+                num_contradictions = len(parsed["cross_model"].get("contradictions", []))
+                num_unique_facts = len(parsed["cross_model"].get("facts_unique_to_model", []))
+
+                # Calculate agreement level
+                if std_score < 0.1:
+                    agreement_level = "High"
+                elif std_score < 0.25:
+                    agreement_level = "Medium"
+                else:
+                    agreement_level = "Low"
+
                 # per-model summary rows
                 for pm in parsed["per_model"]:
                     all_rows.append({
@@ -397,7 +427,7 @@ def main():
                         "MissingCount": len(pm["key_points_missing"])
                     })
 
-                    # Detailed per-question data
+                    # Detailed per-question data with consistency metrics
                     all_details.append({
                         "QID": parsed["question_id"],
                         "Question": parsed["question"][:100] + "..." if len(parsed["question"]) > 100 else parsed["question"],
@@ -408,7 +438,11 @@ def main():
                         "UnsupportedAssertions": "; ".join(pm["unsupported_assertions"]) if pm["unsupported_assertions"] else "",
                         "KeyPointsCovered": "; ".join(pm["key_points_covered"]) if pm["key_points_covered"] else "",
                         "KeyPointsMissing": "; ".join(pm["key_points_missing"]) if pm["key_points_missing"] else "",
-                        "Notes": pm["notes"]
+                        "Notes": pm["notes"],
+                        "ConsistencyScore": round(consistency_score, 2),
+                        "AgreementLevel": agreement_level,
+                        "Contradictions": num_contradictions,
+                        "UniqueFacts": num_unique_facts
                     })
 
                 # cross-model flags

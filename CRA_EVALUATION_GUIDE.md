@@ -75,9 +75,9 @@ QID | Question | Model | Verdict | Correctness | CriticalErrorCount | MissingCou
 - `MissingCount`: Count of key missing points
 
 ### 3. `per_question_details.csv`
-Detailed evaluation breakdown:
+Detailed evaluation breakdown with consistency metrics:
 ```csv
-QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAssertions | KeyPointsCovered | KeyPointsMissing | Notes
+QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAssertions | KeyPointsCovered | KeyPointsMissing | Notes | ConsistencyScore | AgreementLevel | Contradictions | UniqueFacts
 ```
 
 **Fields**:
@@ -86,6 +86,16 @@ QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAss
 - `KeyPointsCovered`: Important points correctly addressed
 - `KeyPointsMissing`: Important omissions
 - `Notes`: Additional evaluator observations
+- `ConsistencyScore` (0-1): Measures how consistent model responses are for this question
+  - 1.0 = Perfect consistency (all models scored similarly)
+  - 0.5 = Moderate consistency
+  - 0.0 = Very inconsistent responses
+- `AgreementLevel`: Categorical assessment of model agreement
+  - High: Standard deviation < 0.1 in scores
+  - Medium: Standard deviation 0.1-0.25
+  - Low: Standard deviation > 0.25
+- `Contradictions`: Number of direct contradictions between models on this question
+- `UniqueFacts`: Number of fact groups mentioned by only one model
 
 ### 4. `cross_model_flags.csv`
 Cross-model comparison data with improved structure:
@@ -131,10 +141,28 @@ QID | Type | Model | MissingFromModels | Details
 
 ### Interpretation Guide
 
+### Correctness Scores
 - **High Correctness Score (0.8-1.0)**: Generally reliable information
 - **Medium Score (0.5-0.7)**: Some issues but core information likely correct
 - **Low Score (0.0-0.4)**: Significant errors or missing critical information
 - **Uncertain Verdict**: Judge being conservative; check correctness score for relative quality
+
+### Consistency Metrics
+- **High Consistency (0.8-1.0)**: Models agree on most facts and approaches
+  - Indicates robust understanding of the topic
+  - Lower risk of misinformation
+- **Medium Consistency (0.5-0.8)**: Some variation in responses
+  - May indicate ambiguity in the question
+  - Review cross_model_flags for specific differences
+- **Low Consistency (0.0-0.5)**: Significant disagreement between models
+  - High risk area requiring human review
+  - Check contradictions and unique facts for details
+
+### Using Consistency for Quality Assurance
+1. **High Agreement + High Scores**: Most reliable answers
+2. **High Agreement + Low Scores**: All models struggling (knowledge gap)
+3. **Low Agreement + Mixed Scores**: Some models have better information
+4. **Low Agreement + Low Scores**: Problematic question or topic area
 
 ## Configuration
 
@@ -269,6 +297,12 @@ async def verify_fact(claim):
 
 ## Recent Improvements
 
+### Consistency Metrics (Latest)
+- Added ConsistencyScore (0-1) to measure response agreement across models
+- AgreementLevel (High/Medium/Low) for quick assessment
+- Contradiction and UniqueFacts counts in per_question_details.csv
+- Helps identify questions where models disagree significantly
+
 ### Model Name Mapping
 - Automatic correction when Claude Opus doesn't return proper model names
 - Maps evaluations to actual model columns even when parsing issues occur
@@ -278,6 +312,7 @@ async def verify_fact(claim):
 - Cleaner CSV structure with clear Type column (Unique Facts vs. Contradictions)
 - Details column contains only facts/topics, not model names
 - Model involvement clearly shown in dedicated columns
+- Cross-model flags now output to both CSV and Excel formats
 
 ### CRA Context Enhancement
 - Explicit CRA context added to every evaluation prompt
