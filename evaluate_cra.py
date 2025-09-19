@@ -3,7 +3,6 @@ import pandas as pd
 from tqdm import tqdm
 from openai import OpenAI
 
-# ---------- Config ----------
 DEFAULT_MODEL = "anthropic/claude-opus-4.1"  
 REQUIRED_FIELDS = ["Question"]  
 
@@ -84,9 +83,9 @@ def _load_env_from_dotenv_or_file():
     Tries python-dotenv if installed; otherwise performs a minimal parse of
     KEY=VALUE lines in a local .env file. Existing env vars are not overridden.
     """
-    # Try python-dotenv first (no hard dependency)
+    
     try:
-        from dotenv import load_dotenv  # type: ignore
+        from dotenv import load_dotenv  
         load_dotenv(override=False)
         return
     except Exception:
@@ -138,9 +137,7 @@ def _call_openrouter_api(client: OpenAI, model: str, prompt: str):
 
     Returns the parsed JSON object according to EVAL_SCHEMA.
     """
-    # OpenRouter uses the chat completions API
-    # Note: OpenRouter may not support response_format for all models
-    # Instead, we'll ask for JSON in the prompt
+
     json_instruction = "\n\nIMPORTANT: Return your response as a valid JSON object only, with no additional text or markdown formatting."
 
     kwargs = {
