@@ -58,6 +58,24 @@ The judge evaluates **ONLY factual correctness** regarding CRA information, not 
 
 - **Unsupported Assertions**: Specific claims that cannot be justified from well-known CRA facts
 
+- **Consistency Score (0-1)**: Measures how consistent model responses are for this question
+  - 1.0 = Perfect consistency (all models scored similarly)
+  - 0.5 = Moderate consistency
+  - 0.0 = Very inconsistent responses
+  - Calculated using standard deviation of model scores
+
+- **Agreement Level**: Categorical assessment of model agreement
+  - High: Score variance ≤ 0.1 between models
+  - Medium: Score variance 0.1-0.3
+  - Low: Score variance > 0.3
+
+- **Contradictions**: Number of direct factual disagreements between models
+  - Examples: Different tax rates, conflicting procedures, incompatible account identifiers
+
+- **Unique Facts**: Number of fact groups mentioned by only one model
+  - Identifies comprehensive vs. minimal responses
+  - Highlights unique insights or details
+
 ## Output Files
 
 ### 1. `per_question_eval.jsonl`
@@ -74,8 +92,8 @@ QID | Question | Model | Verdict | Correctness | CriticalErrorCount | MissingCou
 - `CriticalErrorCount`: Count of critical errors identified
 - `MissingCount`: Count of key missing points
 
-### 3. `per_question_details.csv`
-Detailed evaluation breakdown with consistency metrics:
+### 3. `per_question_details.csv` & `per_question_details.xlsx`
+Detailed evaluation breakdown including all metrics:
 ```csv
 QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAssertions | KeyPointsCovered | KeyPointsMissing | Notes | ConsistencyScore | AgreementLevel | Contradictions | UniqueFacts
 ```
@@ -86,18 +104,12 @@ QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAss
 - `KeyPointsCovered`: Important points correctly addressed
 - `KeyPointsMissing`: Important omissions
 - `Notes`: Additional evaluator observations
-- `ConsistencyScore` (0-1): Measures how consistent model responses are for this question
-  - 1.0 = Perfect consistency (all models scored similarly)
-  - 0.5 = Moderate consistency
-  - 0.0 = Very inconsistent responses
-- `AgreementLevel`: Categorical assessment of model agreement
-  - High: Standard deviation < 0.1 in scores
-  - Medium: Standard deviation 0.1-0.25
-  - Low: Standard deviation > 0.25
-- `Contradictions`: Number of direct contradictions between models on this question
-- `UniqueFacts`: Number of fact groups mentioned by only one model
+- `ConsistencyScore`: See Key Metrics above
+- `AgreementLevel`: See Key Metrics above
+- `Contradictions`: See Key Metrics above
+- `UniqueFacts`: See Key Metrics above
 
-### 4. `cross_model_flags.csv`
+### 4. `cross_model_flags.csv` & `cross_model_flags.xlsx`
 Cross-model comparison data with improved structure:
 ```csv
 QID | Type | Model | MissingFromModels | Details
@@ -147,18 +159,7 @@ QID | Type | Model | MissingFromModels | Details
 - **Low Score (0.0-0.4)**: Significant errors or missing critical information
 - **Uncertain Verdict**: Judge being conservative; check correctness score for relative quality
 
-### Consistency Metrics
-- **High Consistency (0.8-1.0)**: Models agree on most facts and approaches
-  - Indicates robust understanding of the topic
-  - Lower risk of misinformation
-- **Medium Consistency (0.5-0.8)**: Some variation in responses
-  - May indicate ambiguity in the question
-  - Review cross_model_flags for specific differences
-- **Low Consistency (0.0-0.5)**: Significant disagreement between models
-  - High risk area requiring human review
-  - Check contradictions and unique facts for details
-
-### Using Consistency for Quality Assurance
+### Using Consistency Metrics for Quality Assurance
 1. **High Agreement + High Scores**: Most reliable answers
 2. **High Agreement + Low Scores**: All models struggling (knowledge gap)
 3. **Low Agreement + Mixed Scores**: Some models have better information
