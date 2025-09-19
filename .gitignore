@@ -1,0 +1,36 @@
+# Environment variables
+.env
+
+# Agent configuration
+AGENTS.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# Temporary files
+~$*
+*.tmp
+*.bak
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Output directories
+eval_out/
+*.log
+
+# Data files
+*.xlsx
+*.csv
+*.jsonl
