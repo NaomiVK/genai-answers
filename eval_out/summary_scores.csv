@@ -1,0 +1,41 @@
+QID,Question,Model,Verdict,Correctness,CriticalErrorCount,MissingCount
+74aa4655e8,i want to sign to my account on CRA by my bank account,AI answers response,uncertain,0.8,0,3
+74aa4655e8,i want to sign to my account on CRA by my bank account,ChatGPT4o,uncertain,0.95,0,0
+74aa4655e8,i want to sign to my account on CRA by my bank account,Claude Sonnet 3.7,uncertain,0.95,0,0
+74aa4655e8,i want to sign to my account on CRA by my bank account,Gemini Flash 2.o,uncertain,0.95,0,0
+3feaf9d084,how do you find your account number when you sign into your account,AI answers response,uncertain,0.5,0,2
+3feaf9d084,how do you find your account number when you sign into your account,ChatGPT4o,uncertain,0.8,0,1
+3feaf9d084,how do you find your account number when you sign into your account,Claude Sonnet 3.7,uncertain,0.9,0,0
+3feaf9d084,how do you find your account number when you sign into your account,Gemini Flash 2.o,uncertain,0.0,2,2
+8251d93c27,where do I sign in to my account? I don't want partner sign in. I do have a CRA sign in. Where do I put the information?,AI answers response,uncertain,0.8,0,1
+8251d93c27,where do I sign in to my account? I don't want partner sign in. I do have a CRA sign in. Where do I put the information?,ChatGPT4o,uncertain,1.0,0,0
+8251d93c27,where do I sign in to my account? I don't want partner sign in. I do have a CRA sign in. Where do I put the information?,Claude Sonnet 3.7,uncertain,0.9,0,1
+8251d93c27,where do I sign in to my account? I don't want partner sign in. I do have a CRA sign in. Where do I put the information?,Gemini Flash 2.o,uncertain,0.7,0,2
+fe5a045281,"I want to sign into my personal account, and only have the business account sign in",AI answers response,uncertain,0.5,0,3
+fe5a045281,"I want to sign into my personal account, and only have the business account sign in",ChatGPT4o,uncertain,1.0,0,0
+fe5a045281,"I want to sign into my personal account, and only have the business account sign in",Claude Sonnet 3.7,uncertain,0.5,1,0
+fe5a045281,"I want to sign into my personal account, and only have the business account sign in",Gemini Flash 2.o,uncertain,0.9,0,1
+6466bb9c89,To access a client account do I sign into my cra account or theirs?,AI answers response,uncertain,0.9,0,2
+6466bb9c89,To access a client account do I sign into my cra account or theirs?,ChatGPT4o,uncertain,0.95,0,1
+6466bb9c89,To access a client account do I sign into my cra account or theirs?,Claude Sonnet 3.7,uncertain,1.0,0,0
+6466bb9c89,To access a client account do I sign into my cra account or theirs?,Gemini Flash 2.o,uncertain,0.85,0,3
+bc1cc11022,I want to change my sign in option from sign in partner to cra account,AI answers response,uncertain,0.5,1,3
+bc1cc11022,I want to change my sign in option from sign in partner to cra account,ChatGPT4o,uncertain,1.0,0,0
+bc1cc11022,I want to change my sign in option from sign in partner to cra account,Claude Sonnet 3.7,uncertain,0.9,0,1
+bc1cc11022,I want to change my sign in option from sign in partner to cra account,Gemini Flash 2.o,uncertain,0.0,3,3
+d0e45d52af,How do I access my business CRA account do you have to go to your cra ccount or go to different site,AI answers response,uncertain,0.5,0,4
+d0e45d52af,How do I access my business CRA account do you have to go to your cra ccount or go to different site,ChatGPT4o,uncertain,1.0,0,0
+d0e45d52af,How do I access my business CRA account do you have to go to your cra ccount or go to different site,Claude Sonnet 3.7,uncertain,0.9,0,1
+d0e45d52af,How do I access my business CRA account do you have to go to your cra ccount or go to different site,Gemini Flash 2.o,uncertain,0.7,1,3
+3899a33225,"If I am on my Service account, can I access my CRA account?",AI answers response,uncertain,0.5,0,3
+3899a33225,"If I am on my Service account, can I access my CRA account?",ChatGPT4o,uncertain,0.8,0,2
+3899a33225,"If I am on my Service account, can I access my CRA account?",Claude Sonnet 3.7,uncertain,0.9,0,0
+3899a33225,"If I am on my Service account, can I access my CRA account?",Gemini Flash 2.o,uncertain,0.7,0,3
+abed85b806,"I'm looking for my CRA account sign in page, I only see options to register a new account",AI answers response,uncertain,0.7,0,2
+abed85b806,"I'm looking for my CRA account sign in page, I only see options to register a new account",ChatGPT4o,uncertain,0.8,0,1
+abed85b806,"I'm looking for my CRA account sign in page, I only see options to register a new account",Claude Sonnet 3.7,uncertain,0.9,0,0
+abed85b806,"I'm looking for my CRA account sign in page, I only see options to register a new account",Gemini Flash 2.o,uncertain,0.6,0,2
+df9c9d8e27,my CRA sign in is through my bank and I need to sign in to file my taxes but the CRA Partner sign in is not available,AI answers response,uncertain,0.7,0,4
+df9c9d8e27,my CRA sign in is through my bank and I need to sign in to file my taxes but the CRA Partner sign in is not available,ChatGPT4o,uncertain,0.95,0,1
+df9c9d8e27,my CRA sign in is through my bank and I need to sign in to file my taxes but the CRA Partner sign in is not available,Claude Sonnet 3.7,uncertain,0.9,0,2
+df9c9d8e27,my CRA sign in is through my bank and I need to sign in to file my taxes but the CRA Partner sign in is not available,Gemini Flash 2.o,uncertain,0.85,0,3
