@@ -16,17 +16,35 @@ The script reads from an Excel file (`genai-answers.xlsx`) containing:
 ```mermaid
 graph LR
     A[Excel Data] --> B[Question + Model Responses]
-    B --> C[Claude Opus 4.1 Judge]
-    C --> D[Structured Evaluation]
-    D --> E[Multiple Output Formats]
+    B --> C[Claude Opus 4.1 Judge - First Pass]
+    C --> D[Initial Evaluation]
+    D --> E[Claude Opus 4.1 - Second Pass]
+    E --> F[Validated Evaluation + Confidence Score]
+    F --> G[Multiple Output Formats]
 ```
 
-Each evaluation batch:
+**Two-Pass Evaluation System** (enabled by default):
+
+**First Pass:**
 1. Extracts a question and all model responses
 2. Adds CRA-specific context to ensure proper interpretation
-3. Sends to Claude Opus 4.1 with strict evaluation criteria
-4. Receives structured JSON evaluation
-5. Processes results into multiple output formats
+3. Sends to Claude Opus 4.1 with strict evaluation criteria and few-shot examples
+4. Receives structured JSON evaluation with per-model assessments
+
+**Second Pass (Self-Validation & Confidence Scoring):**
+5. Judge reviews its own first-pass evaluation critically
+6. Validates each critical error is truly materially misleading (not just incomplete/stylistic)
+7. Confirms correctness scores accurately reflect factual accuracy
+8. Double-checks contradictions are real factual disagreements (not just different phrasing)
+9. Validates unique facts are substantive differences (not just verbosity)
+10. **Generates EvalConfidence score (0.0-1.0)** reflecting overall confidence in the evaluation
+11. Returns refined evaluation with updated assessments and confidence score
+
+**Robustness Features:**
+- Retry logic with exponential backoff (3 attempts: 1s, 2s, 4s delays)
+- Validation warnings when judge responses need normalization
+- 10,000 token limit for complex multi-model evaluations
+- Temperature 0.3 for nuanced, balanced assessments
 
 ### 3. Evaluation Criteria
 
@@ -76,10 +94,28 @@ The judge evaluates **ONLY factual correctness** regarding CRA information, not 
   - Identifies comprehensive vs. minimal responses
   - Highlights unique insights or details
 
+- **EvalConfidence (0-1)**: Judge's confidence in the overall evaluation
+  - **Output from second-pass evaluation** - the judge's self-assessed confidence after reviewing its own initial assessment
+  - **Score range**: 0.0 (low confidence) to 1.0 (very confident)
+    - **1.0** = Very confident in this assessment - judge is certain about the CRA facts and evaluation quality
+    - **0.7-0.9** = High confidence - mostly certain with minor uncertainties
+    - **0.5-0.6** = Moderate confidence - some uncertainty exists
+    - **0.3-0.4** = Low confidence - significant uncertainty
+    - **0.0-0.2** = Very low confidence - may need human review
+  - **What the judge considers when scoring**:
+    - Certainty about CRA-specific facts referenced
+    - Confidence that identified critical errors are truly materially misleading
+    - Reliability of assigned correctness scores (0-1)
+    - Validity of identified contradictions between models
+    - Overall assessment quality and potential for misjudgment
+  - **Applies to entire question** (not per-model) - same confidence value appears for all models in that question
+  - **Shows as `null` or `N/A`** if two-pass evaluation is disabled with `--no-two-pass`
+  - **Observed behavior**: In practice, Claude Opus 4.1 tends to provide high confidence scores (typically 0.85-0.95) for most CRA-related questions. Scores below 0.7 are relatively rare and indicate genuine uncertainty about the evaluation.
+
 ## Output Files
 
 ### 1. `per_question_eval.jsonl`
-Raw JSON Lines format with complete evaluation data for each question.
+Raw JSON Lines format with complete evaluation data for each question. Includes `final_confidence` field with judge's confidence score (0.0-1.0).
 
 ### 2. `summary_scores.csv`
 High-level scoring summary:
@@ -95,7 +131,7 @@ QID | Question | Model | Verdict | Correctness | CriticalErrorCount | MissingCou
 ### 3. `per_question_details.csv` & `per_question_details.xlsx`
 Detailed evaluation breakdown including all metrics:
 ```csv
-QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAssertions | KeyPointsCovered | KeyPointsMissing | Notes | ConsistencyScore | AgreementLevel | Contradictions | UniqueFacts
+QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAssertions | KeyPointsCovered | KeyPointsMissing | Notes | ConsistencyScore | AgreementLevel | Contradictions | UniqueFacts | EvalConfidence
 ```
 
 **Fields**:
@@ -108,6 +144,7 @@ QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAss
 - `AgreementLevel`: See Key Metrics above
 - `Contradictions`: See Key Metrics above
 - `UniqueFacts`: See Key Metrics above
+- `EvalConfidence`: Judge's confidence in this evaluation (0.0-1.0, same for all models in question)
 
 ### 4. `cross_model_flags.csv` & `cross_model_flags.xlsx`
 Cross-model comparison data with improved structure:
@@ -160,10 +197,13 @@ QID | Type | Model | MissingFromModels | Details
 - **Uncertain Verdict**: Judge being conservative; check correctness score for relative quality
 
 ### Using Consistency Metrics for Quality Assurance
-1. **High Agreement + High Scores**: Most reliable answers
-2. **High Agreement + Low Scores**: All models struggling (knowledge gap)
-3. **Low Agreement + Mixed Scores**: Some models have better information
-4. **Low Agreement + Low Scores**: Problematic question or topic area
+1. **High Agreement + High Scores + High Confidence (>0.85)**: Most reliable answers
+2. **High Agreement + Low Scores + High Confidence (>0.85)**: All models struggling (confirmed knowledge gap)
+3. **Low Agreement + Mixed Scores + High Confidence (>0.85)**: Some models have better information
+4. **Low Agreement + Low Scores + Low Confidence (<0.7)**: Problematic question requiring human review
+5. **Any Score + Low Confidence (<0.7)**: Judge uncertain, recommend manual verification
+
+**Note**: Given Claude Opus 4.1's tendency toward high confidence scores, treat confidence below 0.85 as a signal to review the evaluation carefully, and below 0.7 as requiring human verification.
 
 ## Configuration
 
@@ -174,6 +214,7 @@ OPENROUTER_API_KEY=sk-or-v1-xxx  # Required for OpenRouter access
 
 ### Command Line Options
 ```bash
+# Basic usage (two-pass enabled by default)
 python evaluate_cra.py \
   --xlsx "genai-answers.xlsx" \      # Input Excel file
   --sheet "Sheet1" \                  # Specific sheet (optional)
@@ -181,7 +222,18 @@ python evaluate_cra.py \
   --model "anthropic/claude-opus-4.1" # Judge model
   --outdir "eval_out" \               # Output directory
   --max-rows 10                       # Limit rows for testing
+
+# Two-pass evaluation control
+python evaluate_cra.py --two-pass      # Enable two-pass (default, explicit)
+python evaluate_cra.py --no-two-pass   # Disable for faster, less accurate evaluation
 ```
+
+**Two-Pass Evaluation:**
+- **Enabled by default** for maximum accuracy
+- Judge reviews and validates its own assessments
+- Adds confidence scores to all outputs
+- Approximately 2x API cost (two evaluations per question)
+- Use `--no-two-pass` for faster testing or cost savings
 
 ## Scaling Considerations
 
@@ -250,6 +302,80 @@ def analyze_error_patterns(evaluations):
     return patterns
 ```
 
+## Recent Improvements (2025-10-01)
+
+### Two-Pass Evaluation System
+The evaluation now uses a two-pass approach for improved accuracy:
+
+1. **First Pass**: Initial evaluation by Claude Opus 4.1 with few-shot examples
+2. **Second Pass**: Judge reviews and validates its own assessment
+   - Confirms critical errors are truly critical
+   - Validates correctness scores
+   - Double-checks contradictions
+   - Produces confidence score (0.0-1.0)
+
+**Benefits:**
+- Higher accuracy through self-validation
+- Confidence scores for filtering uncertain evaluations
+- More consistent assessments across questions
+
+**Trade-offs:**
+- ~2x API cost (two evaluations per question)
+- Longer runtime
+- Can disable with `--no-two-pass` flag
+
+### Technical Enhancements
+
+**Robustness:**
+- ✅ Retry logic with exponential backoff (1s, 2s, 4s) for API failures
+- ✅ Validation logging warns when judge responses need coercion
+- ✅ Excel column handling fixed for columns beyond Z (AA, AB, etc.)
+- ✅ 10,000 token limit (up from 4,000) for complex evaluations
+
+**Evaluation Quality:**
+- ✅ Few-shot example in judge prompt for better calibration
+- ✅ Temperature increased to 0.3 (from 0.1) for more nuanced assessments
+- ✅ Confidence tracking in all output formats
+
+**Output Enhancements:**
+- ✅ `EvalConfidence` column in all CSV/XLSX files
+- ✅ `final_confidence` field in JSONL output
+- ✅ `cra_evaluation_consolidated.xlsx` includes model responses
+
+### Using Confidence Scores
+
+**Filtering Low-Confidence Evaluations:**
+```python
+import pandas as pd
+
+# Load evaluation results
+df = pd.read_csv('eval_out/per_question_details.csv')
+
+# Filter high-confidence evaluations only
+high_confidence = df[df['EvalConfidence'] >= 0.7]
+
+# Identify questions needing human review
+needs_review = df[df['EvalConfidence'] < 0.5]
+print(f"Questions requiring manual review: {len(needs_review['QID'].unique())}")
+```
+
+**Combining Metrics for Quality Assessment:**
+```python
+# Find most reliable answers
+reliable = df[
+    (df['Correctness'] >= 0.8) &
+    (df['EvalConfidence'] >= 0.7) &
+    (df['AgreementLevel'] == 'High')
+]
+
+# Find problematic answers
+problematic = df[
+    (df['Correctness'] < 0.5) |
+    (df['EvalConfidence'] < 0.5) |
+    (df['Contradictions'] > 0)
+]
+```
+
 ## Best Practices
 
 ### 1. Data Preparation
@@ -284,11 +410,14 @@ async def verify_fact(claim):
 ```
 
 ### 3. Confidence Calibration
+**✅ IMPLEMENTED (2025-10-01)**
 ```python
-# Add confidence scores to evaluations
-"confidence_level": 0.95,  # Judge's confidence in evaluation
-"evidence_quality": "strong",  # Based on verifiable sources
+# Confidence scores now included in all evaluations
+"final_confidence": 0.85,  # Judge's confidence after self-review
+"EvalConfidence": 0.85     # Available in CSV/XLSX outputs
 ```
+
+The two-pass evaluation system automatically generates confidence scores by having the judge validate its own assessments.
 
 ### 4. Interactive Dashboard
 - Real-time evaluation monitoring
