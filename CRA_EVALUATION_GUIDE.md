@@ -147,7 +147,7 @@ QID | Question | Model | Verdict | Correctness | CriticalErrors | UnsupportedAss
 - `EvalConfidence`: Judge's confidence in this evaluation (0.0-1.0, same for all models in question)
 
 ### 4. `cross_model_flags.csv` & `cross_model_flags.xlsx`
-Cross-model comparison data with improved structure:
+Cross-model comparison data:
 ```csv
 QID | Type | Model | MissingFromModels | Details
 ```
